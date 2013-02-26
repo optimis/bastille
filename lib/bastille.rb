@@ -3,8 +3,7 @@ require 'highline'
 require 'octokit'
 require 'yaml'
 
-require 'bastille/cli'
-require 'bastille/store'
-
 module Bastille
+  require 'bastille/cli'
+  require 'bastille/store'
 end

@@ -1,5 +1,5 @@
 module Bastille
-  class CLI
+  module CLI
     class Tokenize < Thor
       include Common
       default_task :tokenize

@@ -4,4 +4,4 @@
 require 'rubygems'
 require 'bastille'
 
-Bastille::CLI.start
+Bastille::CLI::Executable.start

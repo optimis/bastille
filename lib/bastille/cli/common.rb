@@ -1,5 +1,5 @@
 module Bastille
-  class CLI
+  module CLI
     module Common
       private
 
