@@ -1,25 +1,8 @@
+require 'bastille/cli/common'
+require 'bastille/cli/tokenize'
+
 module Bastille
   class CLI < Thor
-    desc :tokenize, 'Generates an OAuth token from github to authenticate against Bastille'
-    def tokenize
-      say 'Searching for local token...', :green
-      if store.exist?
-        say 'Found a local token in ~/.bastille. Aborting new token generation. Delete ~/.bastille and run this command again to generate a new token.', :yellow
-      else
-        say "No local token found. Let's make a new one :)", :yellow
-        if yes? 'This action will require you to authenticate with Github. Are you sure you want to generate a new token?', :red
-          username = ask 'Github username: '
-          password = ask 'Password: ' do |q|
-            q.echo = false
-          end
-          if store.generate(username, password)
-            say 'Your token has been generated and authorized with github. It is stored in ~/.bastille. <3', :green
-          else
-            say 'The username and password entered do not match. Sorry. :(', :red
-          end
-        end
-      end
-    end
 
     desc :authenticate, 'Authenticates your user with Github'
     def authenticate
@@ -52,19 +35,6 @@ module Bastille
       say("Token: #{store.token}")
     end
 
-    private
-
-    def ask(*args, &block)
-      highline.ask(*args, &block)
-    end
-
-    def store
-      @store ||= Store.new
-    end
-
-    def highline
-      @highline ||= HighLine.new
-    end
-
+    register Tokenize, :tokenize, Tokenize.usage, Tokenize.description
   end
 end
