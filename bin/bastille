@@ -1,0 +1,101 @@
+#!/usr/bin/env ruby
+# vim:set ft=ruby:
+
+
+require 'rubygems'
+require 'bundler/setup'
+require 'thor'
+require 'highline'
+require 'octokit'
+
+module Bastille
+  class CLI < Thor
+    desc :tokenize, 'Generates an OAuth token from github to authenticate against Bastille'
+    def tokenize
+      say('Searching for local token...', :green)
+      if token.exist?
+        say('Found a local token in ~/.bastille. Aborting new token generation. Delete ~/.bastille and run this command again to generate a new token.', :yellow)
+      else
+        say("No local token found. Let's make a new one :)", :yellow)
+        if yes?('This action will require you to authenticate with Github. Are you sure you want to generate a new token?', :red)
+          username = ask('Github username:')
+          password = highline.ask('Password: ') { |q| q.echo = false }
+          if token.generate(username, password)
+            say('Your token has been generated and authorized with github. It is stored in ~/.bastille. <3', :green)
+          else
+            say('The username and password entered do not match. Sorry. :(', :red)
+          end
+        end
+      end
+    end
+
+    desc :creds, 'Prints your credentials out to the commandline'
+    def creds
+      say("Username: #{token.username}")
+      say("Token: #{token.token}")
+    end
+
+    private
+
+    def token
+      @token ||= Token.new
+    end
+
+    def highline
+      @highline ||= HighLine.new
+    end
+
+    def find_token
+    end
+  end
+
+  class Token
+
+    def exist?
+      pathname.exist?
+    end
+
+    def generate(username, password)
+      @client = Octokit::Client.new(:login => username, :password => password)
+      auth = @client.create_authorization(:scopes => [], :note => 'Bastille', :note_url => 'https://optimis-bastille.herokuapp.com')
+      record_token(username, auth.token)
+      true
+    rescue Octokit::Unauthorized
+      false
+    end
+
+    def record_token(username, token)
+      hash = { :username => username, :token => token }
+      pathname.open('w+') do |f|
+        f.write(YAML.dump(hash))
+      end
+    end
+
+    def username
+      store[:username]
+    end
+
+    def token
+      store[:token]
+    end
+
+    def store
+      @store ||= begin
+        pathname.open('r') do |f|
+          YAML.load(f.read)
+        end
+      end
+    end
+
+    def pathname
+      @pathname ||= Pathname.new(path)
+    end
+
+    def path
+      "#{ENV['HOME']}/.bastille"
+    end
+
+  end
+end
+
+Bastille::CLI.start
