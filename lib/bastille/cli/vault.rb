@@ -15,9 +15,9 @@ module Bastille
       def list
         say 'Listing your vaults...'
         Client.vaults.each do |owner, vaults|
-          say owner
+          say "#{owner}:"
           vaults.each do |vault|
-            say "\t#{vault}"
+            say "  #{vault}"
           end
         end
       end
