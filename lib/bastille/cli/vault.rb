@@ -14,6 +14,12 @@ module Bastille
       desc :list, 'List out existing vaults'
       def list
         say 'Listing your vaults...'
+        Client.vaults.each do |owner, vaults|
+          say owner
+          vaults.each do |vault|
+            say "\t#{vault}"
+          end
+        end
       end
 
     end
