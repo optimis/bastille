@@ -13,12 +13,15 @@ module Bastille
 
       desc :list, 'List out existing vaults'
       def list
-        say 'Listing your vaults...'
-        Client.vaults.each do |owner, vaults|
-          say "#{owner}:"
-          vaults.each do |vault|
-            say "  #{vault}"
+        if (response = Client.vaults).success?
+          response.body.each do |owner, vaults|
+            say "  #{owner}:"
+            vaults.each do |vault|
+              say "    #{vault}"
+            end
           end
+        else
+          say response.body.fetch(:error), :red
         end
       end
 
