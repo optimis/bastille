@@ -25,6 +25,19 @@ module Bastille
         end
       end
 
+      desc 'set [SPACE]:[VAULT] [KEY]=[VALUE]', 'Sets a key in the given vault'
+      def set(space_vault, key_value)
+        space, vault = space_vault.split(':')
+        return say('Expected a : delimited space and vault argument (ie. defunkt:resque)', :red) unless space && vault
+        key, value = key_value.split('=')
+        return say('Expected a key=value argument (ie. RAILS_ENV=production)', :red) unless key && value
+
+        puts space
+        puts vault
+        puts key
+        puts value
+      end
+
     end
   end
 end
