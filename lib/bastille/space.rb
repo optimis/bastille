@@ -1,5 +1,5 @@
 module Bastille
-  class Vault
+  class Space
 
     def initialize(space)
       @space = space
@@ -11,12 +11,13 @@ module Bastille
 
     def get(vault)
       json = redis.get(vault)
-      MultiJson.dump(json)
+      json ? MultiJson.load(json) : {}
     end
 
     def set(vault, contents)
-      json = MultiJson.load(json)
+      json = MultiJson.dump(contents)
       redis.set(vault, json)
+      contents
     end
 
     def redis

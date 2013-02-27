@@ -5,12 +5,14 @@ require 'redis/namespace'
 require 'sinatra'
 
 require 'bastille/hub'
-require 'bastille/vault'
+require 'bastille/space'
 
 module Bastille
   class Server < Sinatra::Base
     configure :production, :development do
       enable :logging
+      set :raise_errors, Proc.new { false }
+      set :show_exceptions, false
     end
 
     before do
@@ -21,11 +23,34 @@ module Bastille
       end
     end
 
+    not_found do
+      status 404
+      MultiJson.dump(:error => "Could not find this action on the Bastille server.")
+    end
+
+    error do
+      MultiJson.dump(:error => "We're sorry. Looks like there was an error processing your request.")
+    end
+
     get '/vaults' do
       json = {}
       vault_spaces.each do |space|
-        json[space] = Vault.new(space).all
+        json[space] = Space.new(space).all
       end
+      MultiJson.dump(json)
+    end
+
+    put '/vaults/:space/:vault' do
+      space = params.fetch('space')
+      vault = params.fetch('vault')
+      key   = params.fetch('key')
+      value = params.fetch('value')
+
+      authorize_space_access!(space)
+
+      space = Space.new(space)
+      contents = space.get(vault)
+      json = space.set(vault, contents.merge(key => value))
       MultiJson.dump(json)
     end
 
@@ -34,6 +59,16 @@ module Bastille
     def authenticated?
       logger.info "Authenticating #{username} with Github"
       hub.authenticate!
+    end
+
+    def authorize_space_access!(space)
+      unless hub.member_of_space?(space)
+        halt 401, <<-RESPONSE
+          Github is saying that you are not the owner of this space.
+          You only have access to space names that match your own username
+          or organizations you belong to.
+        RESPONSE
+      end
     end
 
     def hub
@@ -49,7 +84,7 @@ module Bastille
     end
 
     def vault_spaces
-      @vault_spaces ||= [username] + hub.organizations
+      @vault_spaces ||= hub.spaces
     end
 
   end

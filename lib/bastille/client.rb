@@ -19,10 +19,15 @@ module Bastille
       http :get, path
     end
 
-    def http(method, path)
+    def put(path, options = {})
+      http :put, path, options
+    end
+
+    def http(method, path, options = {})
       if [:get, :post, :put, :delete].include?(method)
         url = domain + path
-        respond_to HTTParty.send(method, url, :headers => headers)
+        options.merge!(:headers => headers)
+        respond_to HTTParty.send(method, url, options)
       end
     end
 
@@ -50,19 +55,11 @@ module Bastille
     end
 
     def body
-      symbolize_keys MultiJson.load(@response.body)
+      MultiJson.load(@response.body)
     end
 
     def success?
       SUCCESS_CODES.include?(@response.code.to_i)
     end
-
-    private
-
-    def symbolize_keys(hash)
-      symbolized_keys = hash.keys.map(&:to_sym)
-      Hash[symbolized_keys.zip(hash.values)]
-    end
-
   end
 end

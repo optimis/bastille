@@ -21,7 +21,7 @@ module Bastille
             end
           end
         else
-          say response.body.fetch(:error), :red
+          say response.body.fetch('error'), :red
         end
       end
 
@@ -34,12 +34,8 @@ module Bastille
 
         response = Client.new(store).set(space, vault, key, value)
         if response.success?
-          response.body.each do |owner, vaults|
-            say "  #{owner}:"
-            vaults.each do |vault|
-              say "    #{vault}"
-            end
-          end
+          puts response.body.inspect
+          say "\"#{key} => #{response.body.fetch(key)}\" has been added to the #{space}:#{vault} vault.", :green
         else
           say response.body.fetch(:error), :red
         end

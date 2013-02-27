@@ -13,8 +13,12 @@ module Bastille
       false
     end
 
-    def organizations
-      client.organizations.collect(&:login)
+    def spaces
+      [@login] + client.organizations.collect(&:login)
+    end
+
+    def member_of_space?(space)
+      spaces.include?(space)
     end
 
     private
