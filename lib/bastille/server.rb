@@ -34,7 +34,7 @@ module Bastille
 
     get '/vaults' do
       json = {}
-      vault_spaces.each do |space|
+      spaces.each do |space|
         json[space] = Space.new(space).all
       end
       MultiJson.dump(json)
@@ -54,6 +54,17 @@ module Bastille
       MultiJson.dump(json)
     end
 
+    get '/vaults/:space/:vault' do
+      space = params.fetch('space')
+      vault = params.fetch('vault')
+
+      authorize_space_access!(space)
+
+      space = Space.new(space)
+      contents = space.get(vault)
+      MultiJson.dump(contents)
+    end
+
     private
 
     def authenticated?
@@ -63,11 +74,12 @@ module Bastille
 
     def authorize_space_access!(space)
       unless hub.member_of_space?(space)
-        halt 401, <<-RESPONSE
+        error = <<-RESPONSE.gsub(/\s+/, ' ').strip
           Github is saying that you are not the owner of this space.
-          You only have access to space names that match your own username
-          or organizations you belong to.
+          Your spaces are #{spaces.inspect}
         RESPONSE
+
+        halt 401, MultiJson.dump(:error => error)
       end
     end
 
@@ -83,8 +95,8 @@ module Bastille
       @token ||= env['HTTP_X_BASTILLE_TOKEN']
     end
 
-    def vault_spaces
-      @vault_spaces ||= hub.spaces
+    def spaces
+      @spaces ||= hub.spaces
     end
 
   end

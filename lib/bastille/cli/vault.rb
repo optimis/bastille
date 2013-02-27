@@ -21,7 +21,7 @@ module Bastille
             end
           end
         else
-          say response.body.fetch('error'), :red
+          say response.error_message, :red
         end
       end
 
@@ -34,10 +34,24 @@ module Bastille
 
         response = Client.new(store).set(space, vault, key, value)
         if response.success?
-          puts response.body.inspect
           say "\"#{key} => #{response.body.fetch(key)}\" has been added to the #{space}:#{vault} vault.", :green
         else
-          say response.body.fetch(:error), :red
+          say response.error_message, :red
+        end
+      end
+
+      desc 'get [SPACE]:[VAULT]', 'Retrieves the contents of a given vault'
+      def get(space_vault)
+        space, vault = space_vault.split(':')
+        return say('Expected a : delimited space and vault argument (ie. defunkt:resque)', :red) unless space && vault
+
+        response = Client.new(store).get(space, vault)
+        if response.success?
+          response.body.sort.each do |key, value|
+            say "#{key}=#{value}"
+          end
+        else
+          say response.error_message, :red
         end
       end
 

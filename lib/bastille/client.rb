@@ -6,22 +6,18 @@ module Bastille
     end
 
     def vaults
-      get '/vaults'
+      http :get, '/vaults'
     end
 
     def set(space, vault, key, value)
-      put "/vaults/#{space}/#{vault}", :body => { :key => key, :value => value }
+      http :put, "/vaults/#{space}/#{vault}", :body => { :key => key, :value => value }
+    end
+
+    def get(space, vault)
+      http :get, "/vaults/#{space}/#{vault}"
     end
 
     private
-
-    def get(path)
-      http :get, path
-    end
-
-    def put(path, options = {})
-      http :put, path, options
-    end
 
     def http(method, path, options = {})
       if [:get, :post, :put, :delete].include?(method)
@@ -60,6 +56,10 @@ module Bastille
 
     def success?
       SUCCESS_CODES.include?(@response.code.to_i)
+    end
+
+    def error_message
+      body.fetch('error')
     end
   end
 end
