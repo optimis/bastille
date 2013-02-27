@@ -12,4 +12,5 @@ module Bastille
   require 'bastille/hub'
   require 'bastille/server'
   require 'bastille/store'
+  require 'bastille/vault'
 end
