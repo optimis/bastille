@@ -13,34 +13,51 @@ module Bastille
     end
 
     get '/vaults' do
-      json = {
-        'optimis' => [
-          'optimis',
-          'watchman',
-          'insight'
-        ],
-        'ryanmoran' => [
-          'banana',
-          'recon'
-        ]
-      }
-
+      json = {}
+      vault_spaces.each do |space|
+        json[space] = Vault.new(space).all
+      end
       MultiJson.dump(json)
     end
 
     private
 
     def authenticated?
-      username = env['HTTP_X_BASTILLE_USERNAME']
-      token    = env['HTTP_X_BASTILLE_TOKEN']
-
       logger.info "Authenticating #{username} with Github"
-      Authenticator.new(username, token).authenticate!
+      hub.authenticate!
+    end
+
+    def hub
+      @hub ||= Hub.new(username, token)
+    end
+
+    def username
+      @username ||= env['HTTP_X_BASTILLE_USERNAME']
+    end
+
+    def token
+      @token ||= env['HTTP_X_BASTILLE_TOKEN']
+    end
+
+    def vault_spaces
+      @vault_spaces ||= [username] + hub.organizations
     end
 
   end
 
-  class Authenticator
+  class Vault
+
+    def initialize(space)
+      @space = space
+    end
+
+    def all
+      []
+    end
+
+  end
+
+  class Hub
 
     def initialize(username, token)
       @login = username
@@ -49,9 +66,16 @@ module Bastille
 
     def authenticate!
       client.ratelimit
+      true
     rescue Octokit::Unauthorized
       false
     end
+
+    def organizations
+      client.organizations.collect(&:login)
+    end
+
+    private
 
     def client
       raise Octokit::Unauthorized unless @login && @oauth
