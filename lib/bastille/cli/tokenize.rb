@@ -24,7 +24,9 @@ module Bastille
             password = ask 'Password: ' do |q|
               q.echo = false
             end
-            if store.generate(username, password)
+            domain = ask 'Where is the bastille server?: '
+            name   = ask 'What should we call this bastille token? This can be anything: '
+            if store.generate(username, password, domain, name)
               say 'Your token has been generated and authorized with github. It is stored in ~/.bastille. <3', :green
             else
               say 'The username and password entered do not match. Sorry. :(', :red

@@ -1,6 +1,9 @@
 module Bastille
-  module Client
-    extend self
+  class Client
+
+    def initialize(store)
+      @store = store
+    end
 
     def vaults
       get '/vaults'
@@ -20,7 +23,7 @@ module Bastille
     end
 
     def domain
-      'http://localhost:9000'
+      @store.domain
     end
 
     def respond_to(response)
