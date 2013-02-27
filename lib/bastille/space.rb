@@ -20,6 +20,16 @@ module Bastille
       contents
     end
 
+    def delete(vault, key)
+      if key
+        contents = get(vault)
+        contents.delete(key)
+        set(vault, contents)
+      else
+        redis.del(vault)
+      end
+    end
+
     def redis
       host = ENV['REDIS_HOST'] || 'localhost'
       port = ENV['REDIS_PORT'] || 6379

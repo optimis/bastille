@@ -65,6 +65,18 @@ module Bastille
       MultiJson.dump(contents)
     end
 
+    delete '/vaults/:space/:vault' do
+      space = params.fetch('space')
+      vault = params.fetch('vault')
+      key   = params['key']
+
+      authorize_space_access!(space)
+
+      space = Space.new(space)
+      space.delete(vault, key)
+      MultiJson.dump('OK!')
+    end
+
     private
 
     def authenticated?

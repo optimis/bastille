@@ -47,11 +47,38 @@ module Bastille
 
         response = Client.new(store).get(space, vault)
         if response.success?
-          response.body.sort.each do |key, value|
-            say "#{key}=#{value}"
+          if response.body.empty?
+            say 'There are no keys in this vault.', :yellow
+          else
+            response.body.sort.each do |key, value|
+              say "#{key}=#{value}"
+            end
           end
         else
           say response.error_message, :red
+        end
+      end
+
+      desc 'delete [SPACE]:[VAULT] (KEY)', 'Deletes the given vault, or removes the key from this vault if given.'
+      def delete(space_vault, key = nil)
+        space, vault = space_vault.split(':')
+        return say('Expected a : delimited space and vault argument (ie. defunkt:resque)', :red) unless space && vault
+
+        question = if key.nil?
+          "Are you sure you want to delete the #{space}:#{vault} vault?"
+        else
+          "Are you sure you want to remove the #{key} key from the #{space}:#{vault} vault?"
+        end
+
+        if yes?(question)
+          response = Client.new(store).delete(space, vault, key)
+          if response.success?
+            say response.body, :green
+          else
+            say response.error_message, :red
+          end
+        else
+          say 'OK, nothing was deleted.', :green
         end
       end
 

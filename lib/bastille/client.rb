@@ -17,6 +17,11 @@ module Bastille
       http :get, "/vaults/#{space}/#{vault}"
     end
 
+    def delete(space, vault, key)
+      options = key ? { :body => { :key => key } } : {}
+      http :delete, "/vaults/#{space}/#{vault}", options
+    end
+
     private
 
     def http(method, path, options = {})
