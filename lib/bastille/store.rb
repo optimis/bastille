@@ -15,8 +15,7 @@ module Bastille
     end
 
     def authenticate
-      client
-      true
+      client.ratelimit
     rescue Octokit::Unauthorized
       false
     end
@@ -26,7 +25,7 @@ module Bastille
     end
 
     def client
-      @client ||= Octokit::Client.new(:login => username, :oauth => token)
+      @client ||= Octokit::Client.new(:login => username, :oauth_token => token)
     end
 
     def username

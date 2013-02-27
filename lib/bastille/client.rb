@@ -18,8 +18,15 @@ module Bastille
     def http(method, path)
       if [:get, :post, :put, :delete].include?(method)
         url = domain + path
-        respond_to HTTParty.send(method, url)
+        respond_to HTTParty.send(method, url, :headers => headers)
       end
+    end
+
+    def headers
+      {
+        'X-BASTILLE-USERNAME' => @store.username,
+        'X-BASTILLE-TOKEN'    => @store.token
+      }
     end
 
     def domain
