@@ -24,7 +24,7 @@ module Bastille
             say 'Successfully authenticated with Github. \m/', :green
             if organization
               if store.member?(organization)
-                say 'And looks like you are a member for this organization too.', :green
+                say 'And looks like you are a member of this organization too.', :green
               else
                 say "...but, you aren't a member of this organization", :red
               end
