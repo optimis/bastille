@@ -9,6 +9,7 @@ require 'yaml'
 module Bastille
   require 'bastille/cli'
   require 'bastille/client'
+  require 'bastille/hub'
   require 'bastille/server'
   require 'bastille/store'
 end
