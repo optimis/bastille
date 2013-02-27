@@ -1,4 +1,4 @@
 require 'rubygems'
-require 'bastille'
+require 'bastille/server'
 
 run Bastille::Server

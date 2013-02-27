@@ -32,10 +32,17 @@ module Bastille
         key, value = key_value.split('=')
         return say('Expected a key=value argument (ie. RAILS_ENV=production)', :red) unless key && value
 
-        puts space
-        puts vault
-        puts key
-        puts value
+        response = Client.new(store).set(space, vault, key, value)
+        if response.success?
+          response.body.each do |owner, vaults|
+            say "  #{owner}:"
+            vaults.each do |vault|
+              say "    #{vault}"
+            end
+          end
+        else
+          say response.body.fetch(:error), :red
+        end
       end
 
     end

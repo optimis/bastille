@@ -1,3 +1,12 @@
+require 'multi_json'
+require 'octokit'
+require 'redis'
+require 'redis/namespace'
+require 'sinatra'
+
+require 'bastille/hub'
+require 'bastille/vault'
+
 module Bastille
   class Server < Sinatra::Base
     configure :production, :development do

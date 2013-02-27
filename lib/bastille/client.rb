@@ -9,6 +9,10 @@ module Bastille
       get '/vaults'
     end
 
+    def set(space, vault, key, value)
+      put "/vaults/#{space}/#{vault}", :body => { :key => key, :value => value }
+    end
+
     private
 
     def get(path)

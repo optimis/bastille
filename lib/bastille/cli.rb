@@ -1,3 +1,13 @@
+require 'highline'
+require 'httparty'
+require 'multi_json'
+require 'octokit'
+require 'thor'
+require 'yaml'
+
+require 'bastille/client'
+require 'bastille/store'
+
 require 'bastille/cli/common'
 require 'bastille/cli/authenticate'
 require 'bastille/cli/credentials'
