@@ -58,11 +58,6 @@ Mimic.mimic :port => 9999 do
   get '/user/orgs' do
     json =[
       {
-        'login' => 'mister.happy',
-        'id'    => 1,
-        "url"   => "#{OCTOKIT_DOMAIN}/orgs/mister.happy"
-      },
-      {
         'login' => 'something',
         'id'    => 2,
         "url"   => "#{OCTOKIT_DOMAIN}/orgs/something"

@@ -63,3 +63,17 @@ Feature: Run `bastille tokenize`
         mister.happy:
         something:
       """
+
+  Scenario: try to get a vault you don't own
+    When I run `bastille vault get defunkt:resque`
+    Then the output should contain:
+    """
+    Github is saying that you are not the owner of this space. Your spaces are ["mister.happy", "something"]
+    """
+
+  Scenario: try to set a key you don't own
+    When I run `bastille vault set defunkt:resque BANANA=yummy`
+    Then the output should contain:
+    """
+    Github is saying that you are not the owner of this space. Your spaces are ["mister.happy", "something"]
+    """
