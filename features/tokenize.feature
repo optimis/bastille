@@ -5,7 +5,6 @@ Feature: Run `bastille tokenize`
   And then serialize this the resulting OAuth token and data from Github
   And store that data in a file at ~/.bastille
 
-  @announce
   Scenario: generate a valid token
     When I run `bastille tokenize` interactively
     And I wait for output to contain "Are you sure you want to generate a new token?"
@@ -19,9 +18,18 @@ Feature: Run `bastille tokenize`
     And I wait for output to contain "What should we call this bastille token?"
     And I type "banana"
     Then the output should not contain "The username and password entered do not match."
+    And the exit status should be 0
     And a file named ".bastille" should exist
     And the file ".bastille" should contain ":username: mister.happy"
     And the file ".bastille" should contain ":token: abc123"
     And the file ".bastille" should contain ":domain: http://localhost:9000"
     And the file ".bastille" should contain ":name: banana"
+
+  @announce
+  Scenario: decide not to generate new token
+    When I run `bastille tokenize` interactively
+    And I wait for output to contain "Are you sure you want to generate a new token?"
+    And I type "no"
+    Then the output should not contain "Github username"
+    And the exit status should be 0
 
