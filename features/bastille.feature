@@ -6,9 +6,10 @@ Feature: Run `bastille`
   Scenario: list all subcommands
     When I run `bastille`
     Then the output should contain:
-    """
-    Tasks:
-      bastille help [TASK]   # Describe available tasks or one specific task
-      bastille token [TASK]  # Provides the user with tools to create and view th...
-      bastille vault [TASK]  # Provides access to your vaults
-    """
+      """
+      Tasks:
+        bastille help [TASK]   # Describe available tasks or one specific task
+        bastille token [TASK]  # Provides the user with tools to create and view th...
+        bastille vault [TASK]  # Provides access to your vaults
+      """
+
