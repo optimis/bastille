@@ -22,6 +22,10 @@ module Bastille
       http :delete, "/vaults/#{space}/#{vault}", options
     end
 
+    def authenticate!
+      http :get, '/authenticate'
+    end
+
     private
 
     def http(method, path, options = {})

@@ -5,6 +5,7 @@ Feature: Run `bastille tokenize`
   And then serialize this the resulting OAuth token and data from Github
   And store that data in a file at ~/.bastille
 
+  @announce
   Scenario: run `token new`, `token show`, and `token delete`
     When I run `bastille token new` interactively
     And I wait for output to contain "Are you sure you want to generate a new token?"
@@ -27,6 +28,13 @@ Feature: Run `bastille tokenize`
         token    : abc123
         domain   : http://localhost:9000
         name     : banana
+      """
+    Then the exit status should be 0
+    When I run `bastille token validate`
+    Then the output should contain:
+      """
+      Validating your token with the bastille server...
+      Your token is valid. \m/
       """
     When I run `bastille token delete` interactively
     And I wait for output to contain "Are you sure you want to delete your token? This cannot be undone."

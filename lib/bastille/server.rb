@@ -77,6 +77,10 @@ module Bastille
       MultiJson.dump('OK!')
     end
 
+    get '/authenticate' do
+      MultiJson.dump('OK!')
+    end
+
     private
 
     def authenticated?

@@ -13,11 +13,9 @@ module Bastille
 
       desc :new, 'Generates an OAuth token from github to authenticate against Bastille'
       def new
-        say 'Searching for local token...', :green
         if store.exist?
-          say 'Found a local token in ~/.bastille. Aborting new token generation. Delete ~/.bastille and run this command again to generate a new token.', :yellow
+          say 'Found a local token in ~/.bastille. Aborting new token generation. Run `bastille token delete` and run this command again to generate a new token.', :yellow
         else
-          say "No local token found. Let's make a new one :)", :yellow
           if yes? 'This action will require you to authenticate with Github. Are you sure you want to generate a new token?', :red
             username = ask 'Github username: '
             password = ask 'Password: ' do |q|
@@ -46,6 +44,20 @@ module Bastille
       def delete
         if yes? 'Are you sure you want to delete your token? This cannot be undone.'
           store.delete!
+        end
+      end
+
+      desc :validate, 'Validates your token with the bastille server.'
+      def validate
+        if store.exist?
+          say 'Validating your token with the bastille server...', :green
+          if store.authenticate
+            say 'Your token is valid. \m/', :green
+          else
+            say "Github says you aren't who you say you are. o_O", :red
+          end
+        else
+          say 'Could not validate your token. There is no token at ~/.bastille. Try running `bastille token new` to generate a new token.', :red
         end
       end
     end
