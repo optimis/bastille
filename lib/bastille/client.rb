@@ -10,11 +10,25 @@ module Bastille
     end
 
     def set(space, vault, key, value)
+      cipher = Gibberish::AES.new(@store.key)
+      key    = Base64.encode64(cipher.encrypt(key))
+      value  = Base64.encode64(cipher.encrypt(value))
       http :put, "/vaults/#{space}/#{vault}", :body => { :key => key, :value => value }
     end
 
     def get(space, vault)
-      http :get, "/vaults/#{space}/#{vault}"
+      response = http :get, "/vaults/#{space}/#{vault}"
+      if response.success?
+        decoded = {}
+        response.body.each do |key, value|
+          cipher = Gibberish::AES.new(@store.key)
+          key    = cipher.decrypt(Base64.decode64(key))
+          value  = cipher.decrypt(Base64.decode64(value))
+          decoded[key] = value
+        end
+        response.body = decoded
+      end
+      response
     end
 
     def delete(space, vault, key)
@@ -60,7 +74,11 @@ module Bastille
     end
 
     def body
-      MultiJson.load(@response.body)
+      @body ||= MultiJson.load(@response.body)
+    end
+
+    def body=(body)
+      @body = body
     end
 
     def success?

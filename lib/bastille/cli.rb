@@ -1,3 +1,5 @@
+require 'base64'
+require 'gibberish'
 require 'highline'
 require 'httparty'
 require 'multi_json'

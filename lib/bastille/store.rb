@@ -8,10 +8,15 @@ module Bastille
       self.token    = auth['token']
       self.domain   = domain
       self.name     = name
+      self.key      = generate_key
       freeze!
       true
     rescue Octokit::Unauthorized
       false
+    end
+
+    def generate_key
+      Krypt::Digest::SHA256.new.digest("#{username}#{Time.now}")
     end
 
     def authenticate
@@ -49,6 +54,14 @@ module Bastille
 
     def name=(name)
       store[:name] = name
+    end
+
+    def key
+      store.fetch(:key) { raise_key_error :key }
+    end
+
+    def key=(key)
+      store[:key] = key
     end
 
     def freeze!

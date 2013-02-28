@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     bastille (0.0.1)
+      gibberish
       highline
       httparty
       multi_json
@@ -37,6 +38,7 @@ GEM
     ffi (1.4.0)
     gherkin (2.11.6)
       json (>= 1.7.6)
+    gibberish (1.2.1)
     hashie (1.2.0)
     highline (1.6.15)
     httparty (0.10.2)

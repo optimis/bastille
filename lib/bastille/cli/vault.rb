@@ -34,7 +34,7 @@ module Bastille
 
         response = Client.new(store).set(space, vault, key, value)
         if response.success?
-          say "\"#{key} => #{response.body.fetch(key)}\" has been added to the #{space}:#{vault} vault.", :green
+          say "\"#{key} => #{value}\" has been added to the #{space}:#{vault} vault.", :green
         else
           say response.error_message, :red
         end
