@@ -16,3 +16,19 @@ Feature: Run `bastille tokenize`
       bastille vault list                               # List out existing vaults
       bastille vault set [SPACE]:[VAULT] [KEY]=[VALUE]  # Sets a key in the given...
     """
+
+  Scenario: list existing vaults
+    Given a file named ".bastille" with:
+    """
+    ---
+    :username: mister.happy
+    :token: abc123
+    :domain: http://localhost:9000
+    :name: banana
+    """
+    When I run `bastille vault list`
+    Then the output should contain:
+    """
+      mister.happy:
+      something:
+    """

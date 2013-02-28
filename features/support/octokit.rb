@@ -9,7 +9,7 @@ Aruba.configure do |config|
   end
 end
 
-Mimic.mimic :port => 9999, :fork => true do
+Mimic.mimic :port => 9999 do
   set :rate_limit, 5000
   set :raise_errors, Proc.new { false }
   set :show_exceptions, false
@@ -43,6 +43,32 @@ Mimic.mimic :port => 9999, :fork => true do
       'created_at' => '2011-09-06T17:26:27Z'
     }.to_json
     [201, headers, body]
+  end
+
+  get '/rate_limit' do
+    json = {
+      'rate' => {
+        'remaining' => (settings.rate_limit - 1),
+        'limit'     => settings.rate_limit
+      }
+    }.to_json
+    [200, headers, json]
+  end
+
+  get '/user/orgs' do
+    json =[
+      {
+        'login' => 'mister.happy',
+        'id'    => 1,
+        "url"   => "#{OCTOKIT_DOMAIN}/orgs/mister.happy"
+      },
+      {
+        'login' => 'something',
+        'id'    => 2,
+        "url"   => "#{OCTOKIT_DOMAIN}/orgs/something"
+      }
+    ].to_json
+    [200, headers, json]
   end
 
 end

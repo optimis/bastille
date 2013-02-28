@@ -28,4 +28,5 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'aruba'
   gem.add_development_dependency 'mimic'
+  gem.add_development_dependency 'fakeredis'
 end

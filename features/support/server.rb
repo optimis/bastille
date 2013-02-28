@@ -1,9 +1,52 @@
-require 'mimic'
+require 'bastille/server'
+require 'fakeredis'
 
-Mimic.mimic :port => 9000, :fork => true do
+module TestServer
+  extend self
 
-  get '/authenticate' do
-    'OK!'
+  HOST   = '127.0.0.1'
+  PORT   = 9000
+  SERVER = 'webrick'
+
+  def run!
+    @thread = Thread.fork do
+      Rack::Server.start :app => Bastille::Server.new,
+        :Host   => HOST,
+        :Port   => PORT,
+        :server => SERVER
+    end
+    wait_for_service
   end
 
+  def stop!
+    @thread.kill
+  end
+
+  def listening?
+    begin
+      socket = TCPSocket.new(HOST, PORT)
+      socket.close unless socket.nil?
+      true
+    rescue Errno::ECONNREFUSED, SocketError
+      false
+    end
+  end
+
+  def wait_for_service(timeout = 5)
+    start_time = Time.now
+
+    until listening?
+      if timeout && (Time.now > (start_time + timeout))
+        raise SocketError.new("Socket did not open within #{timeout} seconds")
+      end
+    end
+  end
 end
+
+at_exit do
+  TestServer.stop!
+end
+
+Octokit.api_endpoint = OCTOKIT_DOMAIN
+Octokit.web_endpoint = OCTOKIT_DOMAIN
+TestServer.run!
