@@ -1,11 +1,22 @@
-Feature: Run `bastille tokenize`
+Feature: Run `bastille token`
   In order to generate a valid token set for authenticating with the bastille server
   As a user
   I want to have the `bastille tokenize` command prompt me to authenticate with Github
   And then serialize this the resulting OAuth token and data from Github
   And store that data in a file at ~/.bastille
 
-  @announce
+  Scenario: list token subcommands
+    When I run `bastille token`
+    Then the output should contain:
+      """
+      Tasks:
+        bastille token delete          # Deletes the token
+        bastille token help [COMMAND]  # Describe subcommands or one specific subco...
+        bastille token new             # Generates an OAuth token from github to au...
+        bastille token show            # Prints your credentials out to the command...
+        bastille token validate        # Validates your token with the bastille ser...
+      """
+
   Scenario: run `token new`, `token show`, and `token delete`
     When I run `bastille token new` interactively
     And I wait for output to contain "Are you sure you want to generate a new token?"
