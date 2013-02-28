@@ -6,7 +6,7 @@ Feature: Run `bastille tokenize`
   And store that data in a file at ~/.bastille
 
   Scenario: generate a valid token
-    When I run `bastille tokenize` interactively
+    When I run `bastille token new` interactively
     And I wait for output to contain "Are you sure you want to generate a new token?"
     And I type "yes"
     And I wait for output to contain "Github username:"
@@ -25,9 +25,8 @@ Feature: Run `bastille tokenize`
     And the file ".bastille" should contain ":domain: http://localhost:9000"
     And the file ".bastille" should contain ":name: banana"
 
-  @announce
   Scenario: decide not to generate new token
-    When I run `bastille tokenize` interactively
+    When I run `bastille token new` interactively
     And I wait for output to contain "Are you sure you want to generate a new token?"
     And I type "no"
     Then the output should not contain "Github username"

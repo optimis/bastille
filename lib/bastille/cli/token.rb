@@ -1,19 +1,18 @@
 module Bastille
   module CLI
-    class Tokenize < Thor
+    class Token < Thor
       include Common
-      default_task :tokenize
 
       def self.usage
-        'tokenize'
+        'token [TASK]'
       end
 
       def self.description
-        'Generates an OAuth token from github to authenticate against Bastille'
+        'Provides the user with tools to create and view their bastille token'
       end
 
-      desc usage, description
-      def tokenize
+      desc :new, 'Generates an OAuth token from github to authenticate against Bastille'
+      def new
         say 'Searching for local token...', :green
         if store.exist?
           say 'Found a local token in ~/.bastille. Aborting new token generation. Delete ~/.bastille and run this command again to generate a new token.', :yellow
