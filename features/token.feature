@@ -36,3 +36,12 @@ Feature: Run `bastille tokenize`
     Then the output should not contain "Github username"
     And the exit status should be 0
 
+  @announce
+  Scenario: delete the token
+    Given an empty file named ".bastille"
+    Then a file named ".bastille" should exist
+    When I run `bastille token delete` interactively
+    And I wait for output to contain "Are you sure you want to delete your token? This cannot be undone."
+    And I type "yes"
+    Then a file named ".bastille" should not exist
+

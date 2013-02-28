@@ -41,6 +41,13 @@ module Bastille
           say "  #{key}#{' ' * (max_number_of_spaces - key.length)}: #{value}"
         end
       end
+
+      desc :delete, 'Deletes the token'
+      def delete
+        if yes? 'Are you sure you want to delete your token? This cannot be undone.'
+          store.delete!
+        end
+      end
     end
   end
 end

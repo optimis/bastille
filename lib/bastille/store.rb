@@ -71,6 +71,10 @@ module Bastille
       exist? ? pathname.open('r') { |f| YAML.load(f.read) } : {}
     end
 
+    def delete!
+      pathname.delete
+    end
+
     def raise_key_error(key)
       raise KeyError, "There is no :#{key} key in the ~/.bastille store. Try running `bastille tokenize` to generate a new store with the correct tokens."
     end
