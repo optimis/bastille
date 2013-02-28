@@ -4,7 +4,6 @@ module Bastille
     def generate(username, password, domain, name)
       @client = Octokit::Client.new(:login => username, :password => password)
       auth = @client.create_authorization(:scopes => [], :note => name, :note_url => domain)
-      puts auth.class
       self.username = username
       self.token    = auth['token']
       self.domain   = domain

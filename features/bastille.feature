@@ -6,7 +6,6 @@ Feature: Run `bastille`
   Scenario: list all subcommands
     When I run `bastille`
     Then the output should contain "bastille authenticate"
-    And the output should contain "bastille credentials"
     And the output should contain "bastille help"
     And the output should contain "bastille token [TASK]"
     And the output should contain "bastille vault [TASK]"
