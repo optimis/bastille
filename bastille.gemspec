@@ -25,4 +25,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'redis-namespace'
   gem.add_dependency 'sinatra'
   gem.add_dependency 'thor'
+
+  gem.add_development_dependency 'aruba'
 end
