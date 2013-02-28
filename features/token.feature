@@ -5,7 +5,7 @@ Feature: Run `bastille tokenize`
   And then serialize this the resulting OAuth token and data from Github
   And store that data in a file at ~/.bastille
 
-  Scenario: generate a valid token and show it using `token show`
+  Scenario: run `token new`, `token show`, and `token delete`
     When I run `bastille token new` interactively
     And I wait for output to contain "Are you sure you want to generate a new token?"
     And I type "yes"
@@ -28,6 +28,10 @@ Feature: Run `bastille tokenize`
         domain   : http://localhost:9000
         name     : banana
       """
+    When I run `bastille token delete` interactively
+    And I wait for output to contain "Are you sure you want to delete your token? This cannot be undone."
+    And I type "yes"
+    Then a file named ".bastille" should not exist
 
   Scenario: decide not to generate new token
     When I run `bastille token new` interactively
@@ -35,13 +39,4 @@ Feature: Run `bastille tokenize`
     And I type "no"
     Then the output should not contain "Github username"
     And the exit status should be 0
-
-  @announce
-  Scenario: delete the token
-    Given an empty file named ".bastille"
-    Then a file named ".bastille" should exist
-    When I run `bastille token delete` interactively
-    And I wait for output to contain "Are you sure you want to delete your token? This cannot be undone."
-    And I type "yes"
-    Then a file named ".bastille" should not exist
 
