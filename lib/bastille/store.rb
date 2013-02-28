@@ -4,8 +4,9 @@ module Bastille
     def generate(username, password, domain, name)
       @client = Octokit::Client.new(:login => username, :password => password)
       auth = @client.create_authorization(:scopes => [], :note => name, :note_url => domain)
+      puts auth.class
       self.username = username
-      self.token    = auth.token
+      self.token    = auth['token']
       self.domain   = domain
       self.name     = name
       freeze!
@@ -96,7 +97,7 @@ module Bastille
     end
 
     def path
-      "#{ENV['HOME']}/.bastille"
+      ENV['BASTILLE_STORE'] || "#{ENV['HOME']}/.bastille"
     end
 
   end

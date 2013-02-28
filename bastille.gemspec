@@ -27,4 +27,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'thor'
 
   gem.add_development_dependency 'aruba'
+  gem.add_development_dependency 'mimic'
 end
