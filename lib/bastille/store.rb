@@ -16,7 +16,7 @@ module Bastille
     end
 
     def generate_key
-      Krypt::Digest::SHA256.new.digest("#{username}#{Time.now}")
+      Gibberish::SHA512("#{username}#{Time.now}")
     end
 
     def authenticate

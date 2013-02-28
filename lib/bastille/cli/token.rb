@@ -34,9 +34,13 @@ module Bastille
 
       desc :show, 'Prints your credentials out to the commandline'
       def show
-        max_number_of_spaces = store.keys.sort { |a,b| a.length <=> b.length }.last.length + 1
-        store.each do |key, value|
-          say "  #{key}#{' ' * (max_number_of_spaces - key.length)}: #{value}"
+        if store.exist?
+          max_number_of_spaces = store.keys.sort { |a,b| a.length <=> b.length }.last.length + 1
+          store.each do |key, value|
+            say "  #{key}#{' ' * (max_number_of_spaces - key.length)}: #{value}"
+          end
+        else
+          say 'There is no token.', :red
         end
       end
 
