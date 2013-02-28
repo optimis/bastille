@@ -13,6 +13,7 @@ Feature: Run `bastille tokenize`
       :token: abc123
       :domain: http://localhost:9000
       :name: banana
+      :key: VTJGc2RHVmtYMTgwMHYzYVowNn
       """
 
   Scenario: list subcommands
