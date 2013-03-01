@@ -1,0 +1,7 @@
+language: ruby
+script: 'bundle exec cucumber'
+rvm:
+  - 1.9.3
+  - rbx-19mode
+  - ruby-head
+  - ree
