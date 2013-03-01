@@ -14,7 +14,7 @@ And then execute:
 Or install it yourself as:
     $ gem install bastille
 
-## Usage
+## CLI Usage
 Here is what you can do with bastille:
 
     $ bastille token new
@@ -72,6 +72,14 @@ Here is what you can do with bastille:
     $ bastille vault list
     ryanmoran:
     optimis:
+
+## Server
+Hosting bastille is very simple. Here is an example `config.ru`.
+
+    require 'rubygems'
+    require 'bastille/server'
+
+    run Bastille::Server
 
 ## Contributing
 
