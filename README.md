@@ -2,7 +2,10 @@
 Bastille is a fortress for your configuration. It is a way to store environment variables
 that you can use in your application in a distributable and secure way. Bastille consists
 of a few pieces, a server, a command-line client, and a Ruby API that give you the ability
-to store and retrieve these environment variables in a simple fashion.
+to store and retrieve these environment variables in a simple fashion. Since Bastille encrypts
+all of your configuration on the client-side, the server is a simple KV store backed up by Redis.
+The server has no way of decrypting your keys, so they will remain secure should the server ever
+be compromised.
 
 ## Installation
 Add this line to your application's Gemfile:
