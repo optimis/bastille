@@ -9,12 +9,15 @@ be compromised.
 
 ## Installation
 Add this line to your application's Gemfile:
+    
     gem 'bastille'
 
 And then execute:
+    
     $ bundle
 
 Or install it yourself as:
+    
     $ gem install bastille
 
 ## CLI Usage
