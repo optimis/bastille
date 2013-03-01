@@ -10,10 +10,13 @@ module TestServer
 
   def run!
     @thread = Thread.fork do
+      ENV['RACK_ENV'] = 'test'
       Rack::Server.start :app => Bastille::Server.new,
-        :Host   => HOST,
-        :Port   => PORT,
-        :server => SERVER
+        :Host      => HOST,
+        :Port      => PORT,
+        :server    => SERVER,
+        :Logger    => WEBrick::Log::new("/dev/null", 7),
+        :AccessLog => []
     end
     wait_for_service
   end
