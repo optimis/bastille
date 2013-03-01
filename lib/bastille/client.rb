@@ -32,7 +32,19 @@ module Bastille
     end
 
     def delete(space, vault, key)
-      options = key ? { :body => { :key => key } } : {}
+      if key
+        decoded = {}
+        response = http :get, "/vaults/#{space}/#{vault}"
+        if response.success?
+          response.body.each do |k, _|
+            cipher = Gibberish::AES.new(@store.key)
+            d_key  = cipher.decrypt(Base64.decode64(k))
+            decoded[d_key] = k
+          end
+          response.body = decoded
+        end
+      end
+      options = key ? { :body => { :key => response.body[key] } } : {}
       http :delete, "/vaults/#{space}/#{vault}", options
     end
 
