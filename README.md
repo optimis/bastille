@@ -17,7 +17,7 @@ Or install it yourself as:
 ## Usage
 Here is what you can do with bastille:
 
-⚡   $ bastille token new
+    $ bastille token new
     This action will require you to authenticate with Github. Are you sure you want to generate a new token? yes
     Github username: ryanmoran
     Password:
@@ -25,7 +25,7 @@ Here is what you can do with bastille:
     What should we call this bastille token? This can be anything: bastille
     Your token has been generated and authorized with github. It is stored in ~/.bastille. <3
 
-⚡   $ bastille token show
+    $ bastille token show
     username : ryanmoran
     token    : abc123
     domain   : http://localhost:9000
@@ -36,40 +36,40 @@ Here is what you can do with bastille:
     Validating your token with the bastille server...
     Your token is valid. \m/
 
-⚡   $ bastille vault list
+    $ bastille vault list
     ryanmoran:
     optimis:
 
-⚡   $ bastille vault set ryanmoran:bastille KEY=value
+    $ bastille vault set ryanmoran:bastille KEY=value
     "KEY => value" has been added to the ryanmoran:bastille vault.
 
-  ⚡ $ bastille vault list
+    $ bastille vault list
     ryanmoran:
       bastille
     optimis:
 
-  ⚡ $ bastille vault get ryanmoran:bastille
+    $ bastille vault get ryanmoran:bastille
     KEY=value
 
-  ⚡ $ bastille vault set ryanmoran:bastille RAILS_ENV=production
+    $ bastille vault set ryanmoran:bastille RAILS_ENV=production
     "RAILS_ENV => production" has been added to the ryanmoran:bastille vault.
 
-  ⚡ $ bastille vault get ryanmoran:bastille
+    $ bastille vault get ryanmoran:bastille
     KEY=value
     RAILS_ENV=production
 
-  ⚡ $ bastille vault delete ryanmoran:bastille KEY
+    $ bastille vault delete ryanmoran:bastille KEY
     Are you sure you want to remove the KEY key from the ryanmoran:bastille vault? yes
     OK!
 
-  ⚡ $ bastille vault get ryanmoran:bastille
+    $ bastille vault get ryanmoran:bastille
     RAILS_ENV=production
 
-⚡   $ bastille vault delete ryanmoran:bastille
+    $ bastille vault delete ryanmoran:bastille
     Are you sure you want to delete the ryanmoran:bastille vault? yes
     OK!
 
-  ⚡ $ bastille vault list
+    $ bastille vault list
     ryanmoran:
     optimis:
 
