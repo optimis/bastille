@@ -97,13 +97,9 @@ module Bastille
     def body
       contents = @response.body
       if @decrypt && success? && !@response.body.empty?
-        puts @store.key
         cipher   = Gibberish::AES.new(@store.key)
-        puts @response.body.inspect
         contents = Base64.decode64(@response.body)
-        puts contents
         contents = cipher.decrypt(contents)
-        puts contents
       end
       @body ||= MultiJson.load(contents)
     end
