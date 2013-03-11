@@ -6,59 +6,42 @@ module Bastille
     end
 
     def vaults
-      http :get, '/vaults'
+      http Request.new(@store, :get, '/vaults')
     end
 
     def set(space, vault, key, value)
-      cipher = Gibberish::AES.new(@store.key)
-      key    = Base64.encode64(cipher.encrypt(key))
-      value  = Base64.encode64(cipher.encrypt(value))
-      http :put, "/vaults/#{space}/#{vault}", :body => { :key => key, :value => value }
+      contents = get(space, vault).body || {}
+      contents.merge!(key => value)
+      request  = Request.new(@store, :put, "/vaults/#{space}/#{vault}", contents)
+      http request
     end
 
     def get(space, vault)
-      response = http :get, "/vaults/#{space}/#{vault}"
-      if response.success?
-        decoded = {}
-        response.body.each do |key, value|
-          cipher = Gibberish::AES.new(@store.key)
-          key    = cipher.decrypt(Base64.decode64(key))
-          value  = cipher.decrypt(Base64.decode64(value))
-          decoded[key] = value
-        end
-        response.body = decoded
-      end
-      response
+      http(Request.new(@store, :get, "/vaults/#{space}/#{vault}"), true)
     end
 
     def delete(space, vault, key)
       if key
-        decoded = {}
-        response = http :get, "/vaults/#{space}/#{vault}"
-        if response.success?
-          response.body.each do |k, _|
-            cipher = Gibberish::AES.new(@store.key)
-            d_key  = cipher.decrypt(Base64.decode64(k))
-            decoded[d_key] = k
-          end
-          response.body = decoded
-        end
+        contents = get(space, vault).body || {}
+        contents.delete(key)
+        request  = Request.new(@store, :put, "/vaults/#{space}/#{vault}", contents)
+        http request
+      else
+        http Request.new(@store, :delete, "/vaults/#{space}/#{vault}")
       end
-      options = key ? { :body => { :key => response.body[key] } } : {}
-      http :delete, "/vaults/#{space}/#{vault}", options
     end
 
     def authenticate!
-      http :get, '/authenticate'
+      http Request.new(@store, :get, '/authenticate')
     end
 
     private
 
-    def http(method, path, options = {})
-      if [:get, :post, :put, :delete].include?(method)
-        url = domain + path
-        options.merge!(:headers => headers)
-        respond_to HTTParty.send(method, url, options)
+    def http(request, decrypt = false)
+      if [:get, :post, :put, :delete].include?(request.method)
+        url = domain + request.path
+        options = request.options.merge!(:headers => headers)
+        respond_to HTTParty.send(request.method, url, options), decrypt
       end
     end
 
@@ -73,20 +56,56 @@ module Bastille
       @store.domain
     end
 
-    def respond_to(response)
-      Response.new(response)
+    def respond_to(response, decrypt)
+      Response.new(@store, response, decrypt)
     end
+  end
+
+  class Request
+    attr_reader :method, :path
+
+    def initialize(store, method, path, contents = nil)
+      @store    = store
+      @method   = method
+      @path     = path
+      @contents = contents
+    end
+
+    def options
+      if @contents
+        cipher   = Gibberish::AES.new(@store.key)
+        contents = MultiJson.dump(@contents)
+        contents = cipher.encrypt(contents)
+        contents = Base64.encode64(contents)
+        { :body => { :contents => contents } }
+      else
+        {}
+      end
+    end
+
   end
 
   class Response
     SUCCESS_CODES = 200..299
 
-    def initialize(response)
+    def initialize(store, response, decrypt = false)
+      @store    = store
       @response = response
+      @decrypt  = decrypt
     end
 
     def body
-      @body ||= MultiJson.load(@response.body)
+      contents = @response.body
+      if @decrypt && success? && !@response.body.empty?
+        puts @store.key
+        cipher   = Gibberish::AES.new(@store.key)
+        puts @response.body.inspect
+        contents = Base64.decode64(@response.body)
+        puts contents
+        contents = cipher.decrypt(contents)
+        puts contents
+      end
+      @body ||= MultiJson.load(contents)
     end
 
     def body=(body)

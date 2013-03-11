@@ -46,17 +46,15 @@ module Bastille
     end
 
     put '/vaults/:space/:vault' do
-      space = params.fetch('space')
-      vault = params.fetch('vault')
-      key   = params.fetch('key')
-      value = params.fetch('value')
+      space    = params.fetch('space')
+      vault    = params.fetch('vault')
+      contents = params.fetch('contents')
 
       authorize_space_access!(space)
 
       space = Space.new(space)
-      contents = space.get(vault)
-      json = space.set(vault, contents.merge(key => value))
-      MultiJson.dump(json)
+      space.set(vault, contents)
+      MultiJson.dump('OK!')
     end
 
     get '/vaults/:space/:vault' do
@@ -66,19 +64,17 @@ module Bastille
       authorize_space_access!(space)
 
       space = Space.new(space)
-      contents = space.get(vault)
-      MultiJson.dump(contents)
+      space.get(vault)
     end
 
     delete '/vaults/:space/:vault' do
       space = params.fetch('space')
       vault = params.fetch('vault')
-      key   = params['key']
 
       authorize_space_access!(space)
 
       space = Space.new(space)
-      space.delete(vault, key)
+      space.delete(vault)
       MultiJson.dump('OK!')
     end
 

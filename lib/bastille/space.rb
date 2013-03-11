@@ -10,24 +10,15 @@ module Bastille
     end
 
     def get(vault)
-      json = redis.get(vault)
-      json ? MultiJson.load(json) : {}
+      redis.get(vault)
     end
 
     def set(vault, contents)
-      json = MultiJson.dump(contents)
-      redis.set(vault, json)
-      contents
+      redis.set(vault, contents)
     end
 
-    def delete(vault, key)
-      if key
-        contents = get(vault)
-        contents.delete(key)
-        set(vault, contents)
-      else
-        redis.del(vault)
-      end
+    def delete(vault)
+      redis.del(vault)
     end
 
     def redis
