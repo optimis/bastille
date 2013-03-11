@@ -88,7 +88,7 @@ module Bastille
     end
 
     def each(&block)
-      store.each(&block)
+      store.sort { |(a, _), (b, _)| a.to_s <=> b.to_s }.each(&block)
     end
 
     def keys

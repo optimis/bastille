@@ -17,7 +17,7 @@ Feature: Run `bastille token`
         bastille token validate        # Validates your token with the bastille ser...
       """
 
-  Scenario: run `token new`, `token show`, and `token delete`
+  Scenario: run `token new`, `token validate`, and `token delete`
     When I run `bastille token new` interactively
     And I wait for output to contain "Are you sure you want to generate a new token?"
     And I type "yes"
@@ -32,15 +32,6 @@ Feature: Run `bastille token`
     Then the output should not contain "The username and password entered do not match."
     And the exit status should be 0
     And a file named ".bastille" should exist
-    When I run `bastille token show`
-    Then the output should contain:
-      """
-        username : mister.happy
-        token    : abc123
-        domain   : http://localhost:9000
-        name     : banana
-      """
-    Then the exit status should be 0
     When I run `bastille token validate`
     Then the output should contain:
       """
@@ -51,6 +42,27 @@ Feature: Run `bastille token`
     And I wait for output to contain "Are you sure you want to delete your token? This cannot be undone."
     And I type "yes"
     Then a file named ".bastille" should not exist
+
+  Scenario: run `token show`
+    Given a file named ".bastille" with:
+      """
+      ---
+      :username: mister.happy
+      :token: abc123
+      :domain: http://localhost:9000
+      :name: banana
+      :key: VTJGc2RHVmtYMTgwMHYzYVowNn
+      """
+    When I run `bastille token show`
+    Then the output should contain:
+      """
+        domain   : http://localhost:9000
+        key      : VTJGc2RHVmtYMTgwMHYzYVowNn
+        name     : banana
+        token    : abc123
+        username : mister.happy
+      """
+    Then the exit status should be 0
 
   Scenario: decide not to generate new token
     When I run `bastille token new` interactively

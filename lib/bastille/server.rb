@@ -4,6 +4,11 @@ require 'redis'
 require 'redis/namespace'
 require 'sinatra'
 
+begin
+  require 'system_timer'
+rescue LoadError
+end
+
 require 'bastille/hub'
 require 'bastille/space'
 

@@ -7,6 +7,11 @@ require 'octokit'
 require 'thor'
 require 'yaml'
 
+begin
+  require 'system_timer'
+rescue LoadError
+end
+
 require 'bastille/client'
 require 'bastille/store'
 

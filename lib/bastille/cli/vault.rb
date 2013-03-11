@@ -14,9 +14,9 @@ module Bastille
       desc :list, 'List out existing vaults'
       def list
         if (response = Client.new(store).vaults).success?
-          response.body.each do |owner, vaults|
+          response.body.sort.each do |owner, vaults|
             say "  #{owner}:"
-            vaults.each do |vault|
+            vaults.sort.each do |vault|
               say "    #{vault}"
             end
           end
