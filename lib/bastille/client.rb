@@ -6,42 +6,42 @@ module Bastille
     end
 
     def vaults
-      http Request.new(@store, :get, '/vaults')
+      http Request.new(:get, '/vaults')
     end
 
     def set(space, vault, key, value)
       contents = get(space, vault).body || {}
       contents.merge!(key => value)
-      request  = Request.new(@store, :put, "/vaults/#{space}/#{vault}", contents)
+      request  = Request.new(:put, "/vaults/#{space}/#{vault}", @store.key, contents)
       http request
     end
 
     def get(space, vault)
-      http(Request.new(@store, :get, "/vaults/#{space}/#{vault}"), true)
+      http Request.new(:get, "/vaults/#{space}/#{vault}", @store.key), @store.key
     end
 
     def delete(space, vault, key)
       if key
         contents = get(space, vault).body || {}
         contents.delete(key)
-        request  = Request.new(@store, :put, "/vaults/#{space}/#{vault}", contents)
+        request  = Request.new(:put, "/vaults/#{space}/#{vault}", @store.key, contents)
         http request
       else
-        http Request.new(@store, :delete, "/vaults/#{space}/#{vault}")
+        http Request.new(:delete, "/vaults/#{space}/#{vault}")
       end
     end
 
     def authenticate!
-      http Request.new(@store, :get, '/authenticate')
+      http Request.new(:get, '/authenticate')
     end
 
     private
 
-    def http(request, decrypt = false)
+    def http(request, key = nil)
       if [:get, :post, :put, :delete].include?(request.method)
         url = domain + request.path
         options = request.options.merge!(:headers => headers)
-        respond_to HTTParty.send(request.method, url, options), decrypt
+        respond_to HTTParty.send(request.method, url, options), key
       end
     end
 
@@ -56,27 +56,29 @@ module Bastille
       @store.domain
     end
 
-    def respond_to(response, decrypt)
-      Response.new(@store, response, decrypt)
+    def respond_to(response, key)
+      Response.new(response, key)
     end
   end
 
   class Request
     attr_reader :method, :path
 
-    def initialize(store, method, path, contents = nil)
-      @store    = store
+    def initialize(method, path, key = nil, contents = nil)
       @method   = method
       @path     = path
+      @key      = key
       @contents = contents
     end
 
     def options
       if @contents
-        cipher   = Gibberish::AES.new(@store.key)
-        contents = MultiJson.dump(@contents)
-        contents = cipher.encrypt(contents)
-        contents = Base64.encode64(contents)
+        if @key
+          cipher   = Gibberish::AES.new(@key)
+          contents = MultiJson.dump(@contents)
+          contents = cipher.encrypt(contents)
+          contents = Base64.encode64(contents)
+        end
         { :body => { :contents => contents } }
       else
         {}
@@ -88,16 +90,15 @@ module Bastille
   class Response
     SUCCESS_CODES = 200..299
 
-    def initialize(store, response, decrypt = false)
-      @store    = store
+    def initialize(response, key = nil)
       @response = response
-      @decrypt  = decrypt
+      @key      = key
     end
 
     def body
       contents = @response.body
-      if @decrypt && success? && !@response.body.empty?
-        cipher   = Gibberish::AES.new(@store.key)
+      if @key && success? && !@response.body.empty?
+        cipher   = Gibberish::AES.new(@key)
         contents = Base64.decode64(@response.body)
         contents = cipher.decrypt(contents)
       end
