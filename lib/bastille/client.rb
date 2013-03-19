@@ -10,6 +10,7 @@ module Bastille
     end
 
     def set(space, vault, key, value)
+      check_for_cipher!(space, vault)
       contents = get(space, vault).body || {}
       contents.merge!(key => value)
       request  = Request.new(:put, "/vaults/#{space}/#{vault}", @store.key(space, vault), contents)
@@ -17,11 +18,13 @@ module Bastille
     end
 
     def get(space, vault)
+      check_for_cipher!(space, vault)
       key = @store.key(space, vault)
       http Request.new(:get, "/vaults/#{space}/#{vault}", key), key
     end
 
     def delete(space, vault, key)
+      check_for_cipher!(space, vault)
       if key
         contents = get(space, vault).body || {}
         contents.delete(key)
@@ -37,6 +40,13 @@ module Bastille
     end
 
     private
+
+    def check_for_cipher!(space, vault)
+      existing_vaults = vaults.body
+      if existing_vaults[space] && existing_vaults[space].index(vault) && !@store.key(space, vault, :test)
+        raise 'You are trying to access a vault that you do not have a key for. Try adding the cipher to the cipher list in ~/.bastille'
+      end
+    end
 
     def http(request, key = nil)
       if [:get, :post, :put, :delete].include?(request.method)
