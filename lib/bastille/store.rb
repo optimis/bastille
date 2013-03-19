@@ -8,15 +8,19 @@ module Bastille
       self.token    = auth['token']
       self.domain   = domain
       self.name     = name
-      self.key      = generate_key
       freeze!
       true
     rescue Octokit::Unauthorized
       false
     end
 
-    def generate_key
-      Gibberish::SHA512("#{username}#{Time.now}")
+    def generate_key_for(space, vault)
+      new_ciphers = ciphers.dup
+      cipher = Gibberish::SHA512("#{username}#{space}#{vault}#{Time.now}")
+      new_ciphers["#{space}:#{vault}"] = cipher
+      self.ciphers = new_ciphers
+      freeze!
+      cipher
     end
 
     def authenticate
@@ -56,12 +60,16 @@ module Bastille
       store[:name] = name
     end
 
-    def key
-      store.fetch(:key) { raise_key_error :key }
+    def key(space, vault)
+      ciphers.fetch("#{space}:#{vault}") { generate_key_for(space, vault) }
     end
 
-    def key=(key)
-      store[:key] = key
+    def ciphers
+      store.fetch(:ciphers) { Hash.new }
+    end
+
+    def ciphers=(ciphers)
+      store[:ciphers] = ciphers
     end
 
     def freeze!

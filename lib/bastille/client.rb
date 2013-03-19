@@ -12,19 +12,20 @@ module Bastille
     def set(space, vault, key, value)
       contents = get(space, vault).body || {}
       contents.merge!(key => value)
-      request  = Request.new(:put, "/vaults/#{space}/#{vault}", @store.key, contents)
+      request  = Request.new(:put, "/vaults/#{space}/#{vault}", @store.key(space, vault), contents)
       http request
     end
 
     def get(space, vault)
-      http Request.new(:get, "/vaults/#{space}/#{vault}", @store.key), @store.key
+      key = @store.key(space, vault)
+      http Request.new(:get, "/vaults/#{space}/#{vault}", key), key
     end
 
     def delete(space, vault, key)
       if key
         contents = get(space, vault).body || {}
         contents.delete(key)
-        request  = Request.new(:put, "/vaults/#{space}/#{vault}", @store.key, contents)
+        request  = Request.new(:put, "/vaults/#{space}/#{vault}", @store.key(space, vault), contents)
         http request
       else
         http Request.new(:delete, "/vaults/#{space}/#{vault}")

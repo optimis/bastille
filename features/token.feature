@@ -51,13 +51,11 @@ Feature: Run `bastille token`
       :token: abc123
       :domain: http://localhost:9000
       :name: banana
-      :key: VTJGc2RHVmtYMTgwMHYzYVowNn
       """
     When I run `bastille token show`
     Then the output should contain:
       """
         domain   : http://localhost:9000
-        key      : VTJGc2RHVmtYMTgwMHYzYVowNn
         name     : banana
         token    : abc123
         username : mister.happy
