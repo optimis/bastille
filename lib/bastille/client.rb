@@ -113,7 +113,7 @@ module Bastille
         contents = Base64.decode64(@response.body)
         contents = cipher.decrypt(contents)
       end
-      @body ||= MultiJson.load(contents)
+      @body ||= MultiJson.load(contents) unless contents.empty?
     end
 
     def body=(body)
