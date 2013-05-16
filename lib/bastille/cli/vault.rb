@@ -30,8 +30,6 @@ module Bastille
         space, vault = space_vault.split(':')
         return say('Expected a : delimited space and vault argument (ie. defunkt:resque)', :red) unless space && vault
         key, value = key_value.split('=')
-        return say('Expected a key=value argument (ie. RAILS_ENV=production)', :red) unless key && value
-
         response = Client.new(store).set(space, vault, key, value)
         if response.success?
           say "\"#{key} => #{value}\" has been added to the #{space}:#{vault} vault.", :green
