@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    bastille (0.0.2)
+    bastille (0.0.3)
       gibberish
       highline
       httparty
