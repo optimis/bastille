@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'gibberish'
   gem.add_dependency 'highline'
-  gem.add_dependency 'httparty', '0.10.2'
+  gem.add_dependency 'httparty', '0.11.0'
   gem.add_dependency 'multi_json'
   gem.add_dependency 'octokit', '1.24.0'
   gem.add_dependency 'redis'
