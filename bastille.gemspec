@@ -19,11 +19,11 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'gibberish'
   gem.add_dependency 'highline'
-  gem.add_dependency 'httparty'
+  gem.add_dependency 'httparty', '0.10.2'
   gem.add_dependency 'multi_json'
-  gem.add_dependency 'octokit'
+  gem.add_dependency 'octokit', '1.24.0'
   gem.add_dependency 'redis'
-  gem.add_dependency 'redis-namespace'
+  gem.add_dependency 'redis-namespace', '~> 1.2'
   gem.add_dependency 'sinatra'
   gem.add_dependency 'thor'
 
