@@ -21,6 +21,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'highline'
   gem.add_dependency 'httparty', '0.11.0'
   gem.add_dependency 'multi_json'
+  gem.add_dependency 'faraday_middleware', '0.9.0'
+  gem.add_dependency 'faraday', '0.8.7'
   gem.add_dependency 'octokit', '1.24.0'
   gem.add_dependency 'redis'
   gem.add_dependency 'redis-namespace', '~> 1.2'
